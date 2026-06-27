@@ -21,6 +21,16 @@ document.addEventListener('DOMContentLoaded', () => {
       return b.timestamp - a.timestamp;
     });
 
+    if (sortedClips.length === 0) {
+      const emptyMsg = document.createElement('div');
+      emptyMsg.textContent = "No clips yet. Copy something!";
+      emptyMsg.style.color = "#888";
+      emptyMsg.style.textAlign = "center";
+      emptyMsg.style.padding = "20px";
+      clipsList.appendChild(emptyMsg);
+      return;
+    }
+
     sortedClips.forEach(clip => {
       const item = document.createElement('div');
       item.className = `clip-item ${clip.pinned ? 'pinned' : ''}`;
@@ -44,6 +54,10 @@ document.addEventListener('DOMContentLoaded', () => {
       copyBtn.textContent = 'Copy';
       copyBtn.onclick = () => {
         navigator.clipboard.writeText(clip.text);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy';
+        }, 1500);
       };
 
       const pinBtn = document.createElement('button');
@@ -107,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   clearAllBtn.addEventListener('click', () => {
+    if (!window.confirm("Delete all unpinned clips?")) return;
     // Only delete unpinned items when clearing all
     allClips = allClips.filter(c => c.pinned);
     saveClips(allClips);
